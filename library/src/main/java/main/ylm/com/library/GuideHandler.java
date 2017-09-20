@@ -56,6 +56,10 @@ public class GuideHandler {
 
     private View.OnClickListener listener;
 
+    public static final int MIN_CLICK_DELAY_TIME = 1000;
+
+    private long lastClickTime = 0;
+
     public static GuideHandler with(Context context){
         return new GuideHandler(context);
     }
@@ -68,25 +72,32 @@ public class GuideHandler {
     public GuideHandler displayOn(View targetView){
         this.mTargetView = targetView;
         guideView = createGuideView();
-        setupView();
         return this;
     }
 
     public void hide(){
-        if (mTargetView != null){
-            dtGuideView.startAnimation(AnimationUtils.loadAnimation(mContext,mConfig.getAnimationConfig().getExitAnim()));
-            dtGuideView.setVisibility(View.GONE);
-        }else {
-            // TODO: 2017/9/14 error
+        if (mTargetView == null){
+            throw new NullPointerException("hide() must be used after displayOn()");
+        }
+        if (dtGuideView != null){
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastClickTime > MIN_CLICK_DELAY_TIME){
+                lastClickTime = currentTime;
+                dtGuideView.startAnimation(AnimationUtils.loadAnimation(mContext,mConfig.getAnimationConfig().getExitAnim()));
+                dtGuideView.setVisibility(View.GONE);
+            }
         }
     }
 
     public void show(){
-        if (mTargetView != null){
+        if (mTargetView == null){
+            throw new NullPointerException("show() must be used after displayOn()");
+        }
+        if (dtGuideView != null){
             dtGuideView.setVisibility(View.VISIBLE);
             dtGuideView.startAnimation(AnimationUtils.loadAnimation(mContext,mConfig.getAnimationConfig().getEnterAnim()));
         }else{
-            // TODO: 2017/9/14 error
+            setupView();
         }
     }
 
@@ -138,7 +149,7 @@ public class GuideHandler {
                     mTargetView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
                 location = new int[2];
-                mTargetView.getLocationInWindow(location);
+                mTargetView.getLocationOnScreen(location);
                 center = new int[2];
                 center[0] = location[0] + mTargetView.getWidth()/2;
                 center[1] = location[1] + mTargetView.getHeight()/2;
@@ -161,7 +172,7 @@ public class GuideHandler {
             dtGuideView.setOnClickListener(listener);
         }
         ((FrameLayout)((Activity)mContext).getWindow().getDecorView()).addView(dtGuideView);
-        dtGuideView.setVisibility(View.INVISIBLE);
+        dtGuideView.startAnimation(AnimationUtils.loadAnimation(mContext,mConfig.getAnimationConfig().getEnterAnim()));
     }
 
     private void locateGuideView(){
@@ -173,7 +184,6 @@ public class GuideHandler {
                 } else {
                     guideView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
-                Log.d("test","radius"+radius);
                 int guideWidth = guideView.getWidth();
                 int guideHeight = guideView.getHeight();
                 RelativeLayout.LayoutParams guideViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
