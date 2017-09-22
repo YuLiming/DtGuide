@@ -39,6 +39,7 @@ public class DtGuideView extends RelativeLayout{
 
     private void init(){
         this.setBackgroundColor(Color.argb(0,0,0,0));
+        this.setClickable(true);
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setColor(mBackgroundColor);
         mHighlightPaint = new Paint();

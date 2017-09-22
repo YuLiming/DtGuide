@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
                         dtGuide.hide();
                     }
                 })
+                .setDirction(GuideHandler.Dirction.LEFT)
+                .setOffset(13,100)
                 .displayOn(textView);
         dtGuide.show();
         button.setOnClickListener(new View.OnClickListener() {
