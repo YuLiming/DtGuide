@@ -54,6 +54,8 @@ public class GuideHandler {
 
     private int mDirction = Dirction.BOTTOM;
 
+    private boolean isShow;
+
     private View.OnClickListener listener;
 
     public static final int MIN_CLICK_DELAY_TIME = 1000;
@@ -66,12 +68,18 @@ public class GuideHandler {
 
     private GuideHandler(Context context){
         this.mContext = context;
-        mConfig = DtGuideFactory.getInstance().getDtGuideConfig();
+        mConfig = DtGuideConfig.newBuilder(context).build();
+    }
+
+    private GuideHandler(Context context,DtGuideConfig config){
+        this.mContext = context;
+        this.mConfig = config;
     }
 
     public GuideHandler displayOn(View targetView){
         this.mTargetView = targetView;
         guideView = createGuideView();
+        setupView();
         return this;
     }
 
@@ -94,10 +102,15 @@ public class GuideHandler {
             throw new NullPointerException("show() must be used after displayOn()");
         }
         if (dtGuideView != null){
-            dtGuideView.setVisibility(View.VISIBLE);
-            dtGuideView.startAnimation(AnimationUtils.loadAnimation(mContext,mConfig.getAnimationConfig().getEnterAnim()));
+            if (dtGuideView.getParent()!=null){
+                dtGuideView.setVisibility(View.VISIBLE);
+                dtGuideView.startAnimation(AnimationUtils.loadAnimation(mContext,mConfig.getAnimationConfig().getEnterAnim()));
+            }else{
+                ((FrameLayout)((Activity)mContext).getWindow().getDecorView()).addView(dtGuideView);
+                dtGuideView.startAnimation(AnimationUtils.loadAnimation(mContext,mConfig.getAnimationConfig().getEnterAnim()));
+            }
         }else{
-            setupView();
+            isShow = true;
         }
     }
 
@@ -171,8 +184,11 @@ public class GuideHandler {
         if (listener!=null){
             dtGuideView.setOnClickListener(listener);
         }
-        ((FrameLayout)((Activity)mContext).getWindow().getDecorView()).addView(dtGuideView);
-        dtGuideView.startAnimation(AnimationUtils.loadAnimation(mContext,mConfig.getAnimationConfig().getEnterAnim()));
+        if (isShow==true){
+            ((FrameLayout)((Activity)mContext).getWindow().getDecorView()).addView(dtGuideView);
+            dtGuideView.startAnimation(AnimationUtils.loadAnimation(mContext,mConfig.getAnimationConfig().getEnterAnim()));
+        }
+
     }
 
     private void locateGuideView(){

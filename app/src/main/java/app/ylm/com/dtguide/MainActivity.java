@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import main.ylm.com.library.DtGuide;
 import main.ylm.com.library.GuideHandler;
 import main.ylm.com.library.config.HighlightConfig;
 
@@ -22,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
         TextView textView = (TextView)findViewById(R.id.text);
         Button button = (Button) findViewById(R.id.button);
         Button button2 = (Button) findViewById(R.id.button2);
-        DtGuide.initialize(this);
         dtGuide = GuideHandler.with(this)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
