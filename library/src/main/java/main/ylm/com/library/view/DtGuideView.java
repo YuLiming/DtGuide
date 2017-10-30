@@ -57,15 +57,17 @@ public class DtGuideView extends RelativeLayout{
     }
 
     private void drawBackground(Canvas canvas){
-        Bitmap bitmap = Bitmap.createBitmap(canvas.getWidth(),canvas.getHeight(),Bitmap.Config.ARGB_8888);
-        Canvas tmp = new Canvas(bitmap);
-        tmp.drawRect(0,0,tmp.getWidth(),tmp.getHeight(),mBackgroundPaint);
-        PorterDuffXfermode porterDuffXfermode = new PorterDuffXfermode(PorterDuff.Mode.SRC_OUT);
-        mHighlightPaint.setXfermode(porterDuffXfermode);
-        mHighlightPaint.setAntiAlias(true);
-        tmp.drawPath(mPath,mHighlightPaint);
-        canvas.drawBitmap(bitmap,0,0,mBackgroundPaint);
-        bitmap.recycle();
+        if(canvas.getWidth()>0&&canvas.getHeight()>0){
+            Bitmap bitmap = Bitmap.createBitmap(canvas.getWidth(),canvas.getHeight(),Bitmap.Config.ARGB_8888);
+            Canvas tmp = new Canvas(bitmap);
+            tmp.drawRect(0,0,tmp.getWidth(),tmp.getHeight(),mBackgroundPaint);
+            PorterDuffXfermode porterDuffXfermode = new PorterDuffXfermode(PorterDuff.Mode.SRC_OUT);
+            mHighlightPaint.setXfermode(porterDuffXfermode);
+            mHighlightPaint.setAntiAlias(true);
+            tmp.drawPath(mPath,mHighlightPaint);
+            canvas.drawBitmap(bitmap,0,0,mBackgroundPaint);
+            bitmap.recycle();
+        }
     }
 
 
