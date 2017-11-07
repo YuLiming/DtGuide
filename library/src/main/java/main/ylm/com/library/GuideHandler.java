@@ -232,8 +232,11 @@ public class GuideHandler {
                 guideView.setLayoutParams(guideViewParams);
             }
         });
-        if (guideView!=null){
-            dtGuideView.addView(guideView);
+        if (guideView!=null&&guideView.getParent()==null){
+            try{
+                dtGuideView.addView(guideView);
+            }catch (Exception e){
+            }
         }
     }
 
